@@ -31,8 +31,3 @@ EOD REPORT - Mon, Jul 17, 2026
 10:30 AM - 11:30 AM | Meeting: Team standup
 9:30 AM - 10:30 AM | Deployment: Project deployment
 ```
-
-## Themes
-
-- Dark Mode (Dracula) - Default theme for reduced eye strain
-- Light Mode (Alucard) - Dracula's official light variant for daytime use
