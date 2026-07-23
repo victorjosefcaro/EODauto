@@ -17,6 +17,8 @@
                     <p>Track your daily training, meetings, and deployments</p>
                 </div>
                 <div class="header-actions">
+                    <button class="settings-button" onclick="openSettingsModal()" title="Settings"
+                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">⚙️</button>
                     <button class="forms-button" onclick="openForms()"> Submit EOD Form</button>
                     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
                 </div>
@@ -169,6 +171,51 @@
                 <div class="modal-buttons">
                     <button type="submit">Save Changes</button>
                     <button type="button" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal" onclick="closeSettingsModal()">&times;</button>
+            </div>
+
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label for="empId">Employee ID (Q1) *</label>
+                    <input type="text" id="empId" placeholder="e.g. 123456" required>
+                </div>
+                <div class="form-group">
+                    <label for="attendanceStatus">Default Attendance Status (Q2) *</label>
+                    <select id="attendanceStatus" required>
+                        <option value="Training">✅ Present – Training (Bootcamp)</option>
+                        <option value="Deployed">🏢 Present – Deployed (Hybrid)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="starRating6">Star Rating - Q6 (1-5) *</label>
+                    <input type="number" id="starRating6" min="1" max="5" value="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="starRating7">Star Rating - Q7 (1-5) *</label>
+                    <input type="number" id="starRating7" min="1" max="5" value="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="defaultText8">Default Text for Q8 *</label>
+                    <textarea id="defaultText8" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="defaultText9">Default Text for Q9 (Optional)</label>
+                    <textarea id="defaultText9"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit">Save Settings</button>
+                    <button type="button" onclick="closeSettingsModal()">Cancel</button>
                 </div>
             </form>
         </div>

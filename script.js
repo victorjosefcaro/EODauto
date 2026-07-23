@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'eodActivities';
 const THEME_KEY = 'eodTheme';
+const SETTINGS_KEY = 'eodSettings';
 const today = new Intl.DateTimeFormat('en-PH', {
     timeZone: 'Asia/Manila',
     dateStyle: 'full',
@@ -107,7 +108,34 @@ function updateThemeButton() {
 }
 
 function openForms() {
-    window.open('https://forms.cloud.microsoft/pages/responsepage.aspx?id=VC0K9rQDFEWyn1uxr3fPC2pICO7P_hdMkKpJ5I4OTyFUNzVSOUZNSDVNNU5UUUVXSjMwOTE3OVdNNy4u&origin=lprLink&route=shorturl', '_blank');
+    const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+
+    if (!settings.empId) {
+        showToast('Please configure Settings first', 'error');
+        openSettingsModal();
+        return;
+    }
+
+    const rawDate = document.getElementById('date').value || new Date().toISOString().split('T')[0];
+    const [year, month, day] = rawDate.split('-');
+    const formattedDate = `${parseInt(month)}/${parseInt(day)}/${year}`;
+    const reportText = generateReport(rawDate);
+
+    const formData = {
+        empId: settings.empId,
+        attendanceStatus: settings.attendanceStatus || 'WFO',
+        date: formattedDate,
+        report: reportText,
+        starRating6: settings.starRating6 || '5',
+        starRating7: settings.starRating7 || '5',
+        defaultText8: settings.defaultText8 || '',
+        defaultText9: settings.defaultText9 || ''
+    };
+
+    const encodedData = encodeURIComponent(JSON.stringify(formData));
+    const baseUrl = 'https://forms.cloud.microsoft/r/6kHD9TXWaH';
+
+    window.open(baseUrl + '#eodauto=' + encodedData, '_blank');
 }
 
 function switchTab(tab) {
@@ -467,9 +495,44 @@ function copySelectedReport() {
 document.getElementById('date').addEventListener('change', loadActivities);
 
 // Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('editModal');
-    if (event.target == modal) {
+window.onclick = function (event) {
+    const editModal = document.getElementById('editModal');
+    const settingsModal = document.getElementById('settingsModal');
+    if (event.target == editModal) {
         closeEditModal();
     }
+    if (event.target == settingsModal) {
+        closeSettingsModal();
+    }
 }
+
+// --- Settings Logic ---
+function openSettingsModal() {
+    const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    document.getElementById('empId').value = settings.empId || '';
+    document.getElementById('attendanceStatus').value = settings.attendanceStatus || 'Training';
+    document.getElementById('starRating6').value = settings.starRating6 || '5';
+    document.getElementById('starRating7').value = settings.starRating7 || '5';
+    document.getElementById('defaultText8').value = settings.defaultText8 || '';
+    document.getElementById('defaultText9').value = settings.defaultText9 || '';
+    document.getElementById('settingsModal').classList.add('show');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('show');
+}
+
+document.getElementById('settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const settings = {
+        empId: document.getElementById('empId').value,
+        attendanceStatus: document.getElementById('attendanceStatus').value,
+        starRating6: document.getElementById('starRating6').value,
+        starRating7: document.getElementById('starRating7').value,
+        defaultText8: document.getElementById('defaultText8').value,
+        defaultText9: document.getElementById('defaultText9').value,
+    };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    closeSettingsModal();
+    showToast('Settings saved!', 'success');
+});
